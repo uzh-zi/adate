@@ -28,9 +28,10 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Create venv and install
+      # setup-uv already provisions and activates a .venv (VIRTUAL_ENV is set),
+      # so install straight into it rather than creating another venv.
+      - name: Install appkit and app
         run: |
-          uv venv
           uv pip install ./.appkit
           uv pip install -e '.[dev]'
 
@@ -45,7 +46,7 @@ jobs:
       - name: Setup Node (for pa11y)
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "22"
 
       - name: Start example app
         env:

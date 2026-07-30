@@ -52,7 +52,10 @@ jobs:
         env:
           APPKIT_BACKEND: fake
         run: |
-          uv run uvicorn app.main:app --host 127.0.0.1 --port 8080 &
+          # Fully detach the server (own session, no inherited stdio) so the
+          # Actions runner doesn't adopt it as an orphan and hang at cleanup.
+          setsid uv run uvicorn app.main:app --host 127.0.0.1 --port 8080 \
+            > uvicorn.log 2>&1 < /dev/null &
           for i in $(seq 1 30); do
             curl -sf http://localhost:8080/health && break
             sleep 1
@@ -60,3 +63,7 @@ jobs:
 
       - name: Accessibility check (pa11y, WCAG 2.1 AA)
         run: npx -y pa11y-ci --config .pa11yci.json
+
+      - name: Stop example app
+        if: always()
+        run: pkill -f "uvicorn app.main" || true

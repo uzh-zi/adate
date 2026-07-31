@@ -25,9 +25,16 @@ RUN useradd --create-home --uid 10001 appuser
 COPY --from=build /app/.venv /app/.venv
 COPY app ./app
 
+# APPKIT_AUTH=easyauth declares "a trusted proxy terminates the login in front
+# of me, so the X-MS-CLIENT-PRINCIPAL headers can be believed". That is only
+# true if the Container App has authentication enabled AND set to *reject*
+# unauthenticated requests — otherwise a caller reaching the container by
+# another route can set those headers by hand and pick their own roles.
+# See the auth section of README.md before changing this.
 ENV PATH="/app/.venv/bin:$PATH" \
     PYTHONUNBUFFERED=1 \
-    APPKIT_BACKEND=azure
+    APPKIT_BACKEND=azure \
+    APPKIT_AUTH=easyauth
 
 USER appuser
 EXPOSE 8080

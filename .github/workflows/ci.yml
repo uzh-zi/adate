@@ -41,6 +41,7 @@ jobs:
       - name: Test
         env:
           APPKIT_BACKEND: fake
+          APPKIT_AUTH: dev
         run: uv run pytest
 
       - name: Setup Node (for pa11y)
@@ -51,6 +52,7 @@ jobs:
       - name: Start example app
         env:
           APPKIT_BACKEND: fake
+          APPKIT_AUTH: dev
         run: |
           # Fully detach the server (own session, no inherited stdio) so the
           # Actions runner doesn't adopt it as an orphan and hang at cleanup.

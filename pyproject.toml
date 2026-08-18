@@ -20,12 +20,10 @@ dev = [
     "httpx>=0.27",   # test client only; app code must never import httpx
 ]
 
-# appkit is the companion library. `uv sync` pulls it from git. Point this at a
-# tag or `main` once appkit is released; it tracks a feature branch for now —
-# the one that makes APPKIT_BACKEND and APPKIT_AUTH mandatory in a deployment
-# (uzh-zi/appkit#2). Move to `main` when that merges.
+# appkit is the companion library. `uv sync` pulls it from git. Pin to a tag
+# once appkit publishes releases.
 [tool.uv.sources]
-appkit = { git = "https://github.com/uzh-zi/appkit.git", branch = "harden-azure-paths-and-test-them" }
+appkit = { git = "https://github.com/etluchs/appkit.git", branch = "main" }
 
 [build-system]
 requires = ["hatchling"]

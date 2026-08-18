@@ -12,16 +12,14 @@ jobs:
       - name: Checkout app
         uses: actions/checkout@v4
 
-      # appkit is the companion library. Until it lands on `main`, CI installs
-      # it from the same branch pyproject.toml pins. Uses the workflow token so
-      # it works for a private repo too. Switch `repository`/`ref` to a
-      # tag/`main` once appkit is released — and keep this in step with
-      # [tool.uv.sources], or CI tests a different appkit than the image ships.
+      # appkit is the companion library, installed from its main branch. Uses
+      # the workflow token so it works for a private repo too. Pin `ref` to a
+      # tag once appkit publishes releases.
       - name: Checkout appkit
         uses: actions/checkout@v4
         with:
-          repository: uzh-zi/appkit
-          ref: harden-azure-paths-and-test-them
+          repository: etluchs/appkit
+          ref: main
           path: .appkit
           token: ${{ secrets.GITHUB_TOKEN }}
 

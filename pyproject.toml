@@ -23,7 +23,7 @@ dev = [
 # appkit is the companion library. `uv sync` pulls it from git. Pin to a tag
 # once appkit publishes releases.
 [tool.uv.sources]
-appkit = { git = "https://github.com/etluchs/appkit.git", branch = "main" }
+appkit = { git = "https://github.com/uzh-zi/appkit.git", branch = "main" }
 
 [build-system]
 requires = ["hatchling"]

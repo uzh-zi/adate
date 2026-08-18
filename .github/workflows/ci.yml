@@ -18,7 +18,7 @@ jobs:
       - name: Checkout appkit
         uses: actions/checkout@v4
         with:
-          repository: etluchs/appkit
+          repository: uzh-zi/appkit
           ref: main
           path: .appkit
           token: ${{ secrets.GITHUB_TOKEN }}

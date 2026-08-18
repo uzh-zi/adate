@@ -2,12 +2,12 @@
 
 A ready-to-clone starting point for internal business apps at UZH.
 
-**Stack:** FastAPI · Jinja2 · HTMX 2 (vendored) · [appkit](https://github.com/etluchs/appkit)
+**Stack:** FastAPI · Jinja2 · HTMX 2 (vendored) · [appkit](https://github.com/uzh-zi/appkit)
 · uv · ruff · pytest · pa11y
 
 The template ships one **working example app** that lists rows from a SharePoint
 list and emails a summary — the shape of a typical internal tool. Everything
-runs locally with no Azure and no network, because [appkit](https://github.com/etluchs/appkit)
+runs locally with no Azure and no network, because [appkit](https://github.com/uzh-zi/appkit)
 provides in-memory fakes; in production the same code authenticates with the
 app's **managed identity**.
 
@@ -89,7 +89,7 @@ text, not colour), and `aria-current="page"` in the nav.
 
 Local dev needs nothing. In production the app reads its configuration from the
 environment and authenticates with its managed identity; see the
-[appkit README](https://github.com/etluchs/appkit) for the full list
+[appkit README](https://github.com/uzh-zi/appkit) for the full list
 (`APPKIT_SHAREPOINT_SITE`, `APPKIT_MAIL_SENDER`, `APPKIT_DB_DSN`, …).
 
 Two variables are **required** on Container Apps — appkit raises rather than
@@ -134,6 +134,6 @@ needs the Easy Auth **token store** enabled, the `appkit[verify]` extra, and
 
 ## appkit dependency
 
-This template depends on [appkit](https://github.com/etluchs/appkit) via a git
+This template depends on [appkit](https://github.com/uzh-zi/appkit) via a git
 source in `pyproject.toml`, tracking appkit's `main` branch. Pin it to a tag
 once appkit publishes releases.

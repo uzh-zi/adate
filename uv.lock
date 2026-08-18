@@ -36,7 +36,7 @@ wheels = [
 [[package]]
 name = "appkit"
 version = "0.1.0"
-source = { git = "https://github.com/uzh-zi/appkit.git?branch=harden-azure-paths-and-test-them#0da18d195bad927da7ace40c8c8a90e76943561c" }
+source = { git = "https://github.com/uzh-zi/appkit.git?branch=main#5e1999f51ff8a278b68985a21ac996a554eb3900" }
 dependencies = [
     { name = "azure-identity" },
     { name = "httpx" },
@@ -1068,7 +1068,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "appkit", git = "https://github.com/uzh-zi/appkit.git?branch=harden-azure-paths-and-test-them" },
+    { name = "appkit", git = "https://github.com/uzh-zi/appkit.git?branch=main" },
     { name = "fastapi", specifier = ">=0.110" },
     { name = "httpx", marker = "extra == 'dev'", specifier = ">=0.27" },
     { name = "jinja2", specifier = ">=3.1" },

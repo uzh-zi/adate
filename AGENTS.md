@@ -108,6 +108,50 @@ tests/            # pytest; runs on appkit's fake backend, no network
 - **Auth:** the signed-in user comes from `auth.user(request)`, which reads the
   Container Apps Easy Auth headers. Don't parse those headers yourself.
 
+### Two environment variables the deployment must set
+
+`APPKIT_BACKEND` and `APPKIT_AUTH` are both **required** once the app runs on
+Azure Container Apps. appkit raises rather than guessing either one, because a
+wrong guess fails silently: the wrong backend discards mail and database writes
+while looking like it worked, and the wrong auth mode signs in callers who never
+logged in.
+
+| Variable | Local | Container Apps |
+| --- | --- | --- |
+| `APPKIT_BACKEND` | `fake` | `azure` |
+| `APPKIT_AUTH` | `dev` | `easyauth` (or `verify`) |
+
+The `Dockerfile` sets both for production and `tests/conftest.py` sets both for
+tests, so you should not need to think about them. If you hit
+`ConfigError: APPKIT_AUTH is not set`, the deployment is missing configuration —
+do **not** work around it in code.
+
+### Never authorize on something the app cannot verify
+
+`auth.user(request)` returns a `User` whose roles came from headers Easy Auth
+injected. Behind Easy Auth that is trustworthy; on any request path that skips
+it, a caller can set those headers themselves. So let appkit decide whether the
+identity can be believed, and never read the headers yourself:
+
+```python
+# GOOD — appkit applies whatever APPKIT_AUTH says, then you check the role
+user = auth.user(request)
+if user is None or not user.has_role("approver"):
+    return templates.TemplateResponse(request, "_denied.html",
+                                      context(request), status_code=403)
+```
+
+```python
+# BAD — reading the headers directly bypasses APPKIT_AUTH entirely
+if request.headers.get("x-ms-client-principal-name"):        # NO
+    ...
+```
+
+If an app does something genuinely sensitive behind a role check, ask for
+`APPKIT_AUTH=verify`: it validates the tenant-signed id token instead of
+trusting a header. That is a deployment change, not a code change — flag it to
+the person you're working with rather than trying to arrange it in `app/`.
+
 ## Before you say you're done
 
 Run these locally (they are exactly what CI runs):

@@ -13,13 +13,15 @@ jobs:
         uses: actions/checkout@v4
 
       # appkit is the companion library. Until it lands on `main`, CI installs
-      # it from the same branch. Uses the workflow token so it works for a
-      # private repo too. Switch `ref` to a tag/`main` once appkit is released.
+      # it from the same branch pyproject.toml pins. Uses the workflow token so
+      # it works for a private repo too. Switch `repository`/`ref` to a
+      # tag/`main` once appkit is released — and keep this in step with
+      # [tool.uv.sources], or CI tests a different appkit than the image ships.
       - name: Checkout appkit
         uses: actions/checkout@v4
         with:
-          repository: etluchs/appkit
-          ref: claude/uzh-python-golden-path-f3vizw
+          repository: uzh-zi/appkit
+          ref: harden-azure-paths-and-test-them
           path: .appkit
           token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -41,6 +43,7 @@ jobs:
       - name: Test
         env:
           APPKIT_BACKEND: fake
+          APPKIT_AUTH: dev
         run: uv run pytest
 
       - name: Setup Node (for pa11y)
@@ -51,6 +54,7 @@ jobs:
       - name: Start example app
         env:
           APPKIT_BACKEND: fake
+          APPKIT_AUTH: dev
         run: |
           # Fully detach the server (own session, no inherited stdio) so the
           # Actions runner doesn't adopt it as an orphan and hang at cleanup.

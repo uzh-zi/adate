@@ -13,9 +13,15 @@ ENV UV_COMPILE_BYTECODE=1 \
     UV_LINK_MODE=copy \
     UV_PYTHON_DOWNLOADS=never
 
-COPY pyproject.toml README.md ./
+# uv.lock is committed, so two builds of the same commit produce the same
+# dependency set — including the exact appkit commit. `--locked` fails the build
+# if the lockfile has drifted from pyproject.toml rather than quietly resolving
+# something else; re-run `uv lock` after changing a dependency.
+# (CI installs from a checkout rather than the lock, so it is the *commit* that
+# is reproducible here, not "identical to whatever CI happened to resolve".)
+COPY pyproject.toml uv.lock README.md ./
 COPY app ./app
-RUN uv sync --no-dev
+RUN uv sync --locked --no-dev
 
 # ---- runtime: slim image, non-root, managed identity ------------------------
 FROM python:3.11-slim AS runtime
@@ -25,9 +31,16 @@ RUN useradd --create-home --uid 10001 appuser
 COPY --from=build /app/.venv /app/.venv
 COPY app ./app
 
+# APPKIT_AUTH=easyauth declares "a trusted proxy terminates the login in front
+# of me, so the X-MS-CLIENT-PRINCIPAL headers can be believed". That is only
+# true if the Container App has authentication enabled AND set to *reject*
+# unauthenticated requests — otherwise a caller reaching the container by
+# another route can set those headers by hand and pick their own roles.
+# See the auth section of README.md before changing this.
 ENV PATH="/app/.venv/bin:$PATH" \
     PYTHONUNBUFFERED=1 \
-    APPKIT_BACKEND=azure
+    APPKIT_BACKEND=azure \
+    APPKIT_AUTH=easyauth
 
 USER appuser
 EXPOSE 8080

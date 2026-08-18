@@ -21,9 +21,11 @@ dev = [
 ]
 
 # appkit is the companion library. `uv sync` pulls it from git. Point this at a
-# tag or `main` once appkit is released; it tracks the feature branch for now.
+# tag or `main` once appkit is released; it tracks a feature branch for now —
+# the one that makes APPKIT_BACKEND and APPKIT_AUTH mandatory in a deployment
+# (uzh-zi/appkit#2). Move to `main` when that merges.
 [tool.uv.sources]
-appkit = { git = "https://github.com/etluchs/appkit.git", branch = "claude/uzh-python-golden-path-f3vizw" }
+appkit = { git = "https://github.com/uzh-zi/appkit.git", branch = "harden-azure-paths-and-test-them" }
 
 [build-system]
 requires = ["hatchling"]

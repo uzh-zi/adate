@@ -20,10 +20,10 @@ dev = [
     "httpx>=0.27",   # test client only; app code must never import httpx
 ]
 
-# appkit is the companion library. `uv sync` pulls it from git. Point this at a
-# tag or `main` once appkit is released; it tracks the feature branch for now.
+# appkit is the companion library. `uv sync` pulls it from git. Pin to a tag
+# once appkit publishes releases.
 [tool.uv.sources]
-appkit = { git = "https://github.com/etluchs/appkit.git", branch = "claude/uzh-python-golden-path-f3vizw" }
+appkit = { git = "https://github.com/etluchs/appkit.git", branch = "main" }
 
 [build-system]
 requires = ["hatchling"]

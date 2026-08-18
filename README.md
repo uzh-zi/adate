@@ -106,5 +106,5 @@ Postgres permissions appkit needs.
 ## appkit dependency
 
 This template depends on [appkit](https://github.com/etluchs/appkit) via a git
-source in `pyproject.toml`. It currently tracks the feature branch; point it at
-a tag or `main` once appkit is released.
+source in `pyproject.toml`, tracking appkit's `main` branch. Pin it to a tag
+once appkit publishes releases.

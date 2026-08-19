@@ -94,7 +94,9 @@ app/
     _summary.html # HTMX partial swapped in after "Send summary"
   static/
     htmx.min.js   # HTMX 2, vendored (no CDN)
-    app.css       # AA-contrast styles; keep the focus outlines
+    app.css       # UZH corporate design; keep the focus outlines
+    uzh_logo.svg  # vendored logo
+    fonts/        # Source Sans, vendored (no CDN)
 tests/            # pytest; runs on appkit's fake backend, no network
 ```
 
@@ -151,6 +153,24 @@ If an app does something genuinely sensitive behind a role check, ask for
 `APPKIT_AUTH=verify`: it validates the tenant-signed id token instead of
 trusting a header. That is a deployment change, not a code change — flag it to
 the person you're working with rather than trying to arrange it in `app/`.
+
+## Stay inside the UZH corporate design
+
+`app/static/app.css` implements UZH frontend framework 2.10.0 — its palette, its
+type scale, its typeface. The custom properties carry the framework's own names
+and values, so **use the tokens** (`rgba(var(--c-blue), 1)`) rather than typing
+a hex code, and take any new value from the framework rather than inventing one.
+
+Fonts and the logo are vendored in `app/static/`. Never replace them with a CDN
+link: everything ships with the app, and a remote asset would leak every
+visitor's IP to whoever hosts it.
+
+The framework turns the focus outline off and replaces it per component. We keep
+ours — see the note at the top of `app.css`, and the test that pins it. Do not
+"fix" that to match.
+
+If you add a macro, style it in `app.css` and keep the contrast: text at 4.5:1,
+borders and focus rings at 3:1.
 
 ## Before you say you're done
 

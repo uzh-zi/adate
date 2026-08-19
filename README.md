@@ -115,6 +115,32 @@ for>` tied to every input, `aria-describedby` for help/error text, `<th
 scope>` on tables, `role="status"`/`role="alert"` on banners (meaning carried by
 text, not colour), and `aria-current="page"` in the nav.
 
+## What is this process actually doing?
+
+The app logs its configuration at startup — and, more usefully, what is **not**
+configured:
+
+```
+config | backend      PASS  fake (in-memory; nothing will be contacted)
+config | auth         PASS  dev
+config | sharepoint   SKIP  APPKIT_SHAREPOINT_FAKE_DIR not set
+config |                    Lists will be the built-in seed data.
+config | mail         SKIP  APPKIT_MAIL_SENDER not set; cannot send mail
+config | database     SKIP  APPKIT_DB_DSN not set; cannot query Postgres
+```
+
+The failures this stack has are quiet ones: on the fake backend mail is
+discarded and database writes vanish on restart, while every call still returns
+success. `appkit.doctor.log_startup()` contacts nothing, so it is safe on every
+boot; `APP_LOG_LEVEL` sets the level (default `INFO`).
+
+For the questions that need a network round trip — does this identity *really*
+have `Mail.Send`? — run the full check in the container:
+
+```sh
+python -m appkit.doctor --list Requests --send-mail you@uzh.ch
+```
+
 ## Configuration
 
 Local dev needs nothing. In production the app reads its configuration from the

@@ -154,6 +154,17 @@ If an app does something genuinely sensitive behind a role check, ask for
 trusting a header. That is a deployment change, not a code change — flag it to
 the person you're working with rather than trying to arrange it in `app/`.
 
+### Say what the app is configured to do
+
+`app/main.py` logs `appkit.doctor.log_startup()` as it starts. Keep it. On the
+fake backend mail is discarded and database writes vanish on restart while every
+call still returns success, so "which backend am I on?" has to be answerable
+from the log rather than by reading code.
+
+That report needs `logging.basicConfig` to have run — uvicorn configures only
+its own loggers — so do not remove that call either. If your app has its own
+notion of "configured", log it alongside; `log_startup()` returns the checks.
+
 ## Stay inside the UZH corporate design
 
 `app/static/app.css` implements UZH frontend framework 2.10.0 — its palette, its

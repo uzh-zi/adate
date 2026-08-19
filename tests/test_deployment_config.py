@@ -52,3 +52,41 @@ def test_the_summary_form_is_prefilled_with_the_signed_in_address(signed_in_clie
     body = signed_in_client(email="ben.marti@uzh.ch").get("/").text
 
     assert 'value="ben.marti@uzh.ch"' in body
+
+
+# --- the startup report ----------------------------------------------------
+
+
+def test_the_app_reports_its_configuration_at_startup(caplog):
+    """An app should say out loud what it is about to do.
+
+    On the fake backend mail is discarded and database writes vanish on
+    restart, while every call still returns success — so "which backend am I
+    on?" has to be answerable without reading code. `appkit.doctor` supplies
+    the report; this pins that the template actually logs it.
+    """
+    import logging
+
+    from fastapi.testclient import TestClient
+
+    from app.main import app
+
+    # Entering the TestClient context is what runs the lifespan.
+    with caplog.at_level(logging.INFO), TestClient(app):
+        pass
+
+    report = [r.getMessage() for r in caplog.records if "config |" in r.getMessage()]
+    assert any("backend" in line for line in report)
+    # The useful half: what is *not* configured.
+    assert any("mail" in line and "not set" in line for line in report)
+
+
+def test_logging_is_configured_or_the_report_goes_nowhere():
+    """uvicorn configures its own loggers and leaves the root one alone.
+
+    Without a basicConfig call the app's INFO records are dropped and the
+    report silently does nothing, which is an easy way to think this works
+    when it does not.
+    """
+    source = (Path(__file__).parent.parent / "app" / "main.py").read_text()
+    assert "logging.basicConfig" in source

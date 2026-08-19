@@ -1,4 +1,4 @@
-# adate — UZH Python golden-path template
+# adate — UZH Python ADmin App TEmplate (golden-path)
 
 A ready-to-clone starting point for internal business apps at UZH.
 

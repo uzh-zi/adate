@@ -38,7 +38,9 @@ app/
     _summary.html    # HTMX partial (mail confirmation)
   static/
     htmx.min.js       # HTMX 2.0.4, vendored — no CDN
-    app.css           # AA-contrast styles, visible focus
+    app.css           # UZH corporate design (frontend framework 2.10.0)
+    uzh_logo.svg      # vendored from the 2.10.0 release
+    fonts/            # Source Sans, vendored — no CDN
 tests/               # pytest, runs on appkit's fake backend
 Dockerfile           # multi-stage, non-root, managed-identity runtime
 AGENTS.md            # house rules for the AI assistant
@@ -67,6 +69,34 @@ Run the accessibility check locally (needs Node):
 uv run uvicorn app.main:app --port 8080 &
 npx pa11y-ci --config .pa11yci.json
 ```
+
+## Corporate design
+
+Styling follows the **UZH frontend framework 2.10.0**
+(https://www.frontend.uzh.ch/prod/index.html): its palette, its type scale
+(42/26/18px headings at weight 600, 18px body copy), Source Sans as the
+corporate typeface, pill buttons, and the UZH wordmark in the header. The
+custom properties in `app.css` use the framework's own names and values, so
+`--c-blue: 0, 40, 165` means the same here as it does there — **use the tokens**
+rather than typing a hex code.
+
+The framework's own 220 KB stylesheet is deliberately *not* used: it targets the
+university web platform's markup, while an app built from this template renders
+the macros below. Taking the tokens gets the look without the coupling. Fonts
+and the logo are vendored into `app/static/`; nothing is fetched from a CDN,
+which also keeps visitors' IP addresses off third-party servers.
+
+`tests/test_corporate_design.py` pins the palette, the type scale, the vendored
+assets, the no-CDN rule and — see below — the focus ring, so an app that
+inherits this template inherits the checks too.
+
+**One deliberate deviation.** The framework sets
+`:focus-visible { outline: none !important }` and supplies its own per-component
+focus indicators. This template does not ship those components, so dropping the
+outline would leave keyboard users with no visible focus at all — a WCAG 2.4.7
+failure that no automated checker flags, because it cannot distinguish a styled
+focus state from a missing one. The template keeps a visible focus ring in UZH
+blue. Don't "fix" it to match.
 
 ## The macro library
 

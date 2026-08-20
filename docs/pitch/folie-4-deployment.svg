@@ -9,17 +9,19 @@
 <rect x="555" y="330" width="190" height="56" rx="28" fill="#FFFFFF" stroke="#E9E9E9" stroke-width="2"/>
 <text x="650" y="366" font-size="22" fill="#121212" text-anchor="middle">Internet</text>
 <path d="M650 390 V434" stroke="#666666" stroke-width="3" marker-end="url(#arw4)"/>
-<text x="672" y="418" font-size="19" fill="#666666">HTTPS 443 · adate.azr.uzh.ch</text>
+<text x="672" y="418" font-size="19" fill="#666666">HTTPS 443</text>
 <rect x="100" y="440" width="1100" height="130" rx="10" fill="#0028A5"/>
 <text x="140" y="486" font-size="26" fill="#FFFFFF" font-weight="600">Connectivity Hub — eigene Subscription</text>
 <rect x="140" y="502" width="220" height="38" rx="19" fill="#FFFFFF" stroke="rgba(255,255,255,.45)" stroke-width="1.5"/>
 <text x="250" y="528" font-size="20" fill="#121212" text-anchor="middle">Application Gateway</text>
 <rect x="370" y="502" width="60" height="38" rx="19" fill="#FFFFFF" stroke="rgba(255,255,255,.45)" stroke-width="1.5"/>
 <text x="400" y="528" font-size="20" fill="#121212" text-anchor="middle">WAF</text>
-<rect x="440" y="502" width="160" height="38" rx="19" fill="#FFFFFF" stroke="rgba(255,255,255,.45)" stroke-width="1.5"/>
-<text x="520" y="528" font-size="20" fill="#121212" text-anchor="middle">Host-Listener</text>
-<rect x="610" y="502" width="220" height="38" rx="19" fill="#FFFFFF" stroke="rgba(255,255,255,.45)" stroke-width="1.5"/>
-<text x="720" y="528" font-size="20" fill="#121212" text-anchor="middle">internal.azr.uzh.ch</text>
+<rect x="440" y="502" width="230" height="38" rx="19" fill="#FFFFFF" stroke="rgba(255,255,255,.45)" stroke-width="1.5"/>
+<text x="555" y="528" font-size="20" fill="#121212" text-anchor="middle">scat-test.azr.uzh.ch</text>
+<rect x="680" y="502" width="180" height="38" rx="19" fill="#FFFFFF" stroke="rgba(255,255,255,.45)" stroke-width="1.5"/>
+<text x="770" y="528" font-size="20" fill="#121212" text-anchor="middle">scat.azr.uzh.ch</text>
+<rect x="870" y="502" width="220" height="38" rx="19" fill="#FFFFFF" stroke="rgba(255,255,255,.45)" stroke-width="1.5"/>
+<text x="980" y="528" font-size="20" fill="#121212" text-anchor="middle">internal.azr.uzh.ch</text>
 <path d="M360 574 V626" stroke="#666666" stroke-width="3" marker-end="url(#arw4)"/>
 <path d="M940 574 V626" stroke="#666666" stroke-width="3" marker-end="url(#arw4)"/>
 <text x="378" y="606" font-size="19" fill="#666666">VNet-Peering</text>
@@ -28,16 +30,16 @@
 <text x="140" y="678" font-size="26" fill="#0028A5" font-weight="600">Landing Zone TEST</text>
 <text x="140" y="706" font-size="20" fill="#666666">eigene Subscription · vended Spoke</text>
 <rect x="140" y="724" width="440" height="124" rx="8" fill="#FFFFFF" stroke="#E9E9E9" stroke-width="2"/>
-<text x="164" y="754" font-size="21" fill="#121212" font-weight="600">cae-adate-test</text>
+<text x="164" y="754" font-size="21" fill="#121212" font-weight="600">cae-scat-test</text>
 <text x="164" y="778" font-size="18" fill="#666666">internes Load-Balancing · Workload Profiles</text>
-<rect x="164" y="790" width="153" height="37" rx="18" fill="#FFFFFF" stroke="#E9E9E9" stroke-width="1.5"/>
-<text x="240" y="815" font-size="19" fill="#121212" text-anchor="middle">ca-adate-test</text>
-<rect x="327" y="790" width="210" height="37" rx="18" fill="#FFFFFF" stroke="#E9E9E9" stroke-width="1.5"/>
-<text x="432" y="815" font-size="19" fill="#121212" text-anchor="middle">caj-adate-test-live</text>
-<rect x="140" y="862" width="172" height="37" rx="18" fill="#FFFFFF" stroke="#E9E9E9" stroke-width="1.5"/>
-<text x="226" y="887" font-size="19" fill="#121212" text-anchor="middle">psql-adate-test</text>
-<rect x="322" y="862" width="153" height="37" rx="18" fill="#FFFFFF" stroke="#E9E9E9" stroke-width="1.5"/>
-<text x="398" y="887" font-size="19" fill="#121212" text-anchor="middle">id-adate-test</text>
+<rect x="164" y="790" width="144" height="37" rx="18" fill="#FFFFFF" stroke="#E9E9E9" stroke-width="1.5"/>
+<text x="236" y="815" font-size="19" fill="#121212" text-anchor="middle">ca-scat-test</text>
+<rect x="318" y="790" width="201" height="37" rx="18" fill="#FFFFFF" stroke="#E9E9E9" stroke-width="1.5"/>
+<text x="418" y="815" font-size="19" fill="#121212" text-anchor="middle">caj-scat-test-live</text>
+<rect x="140" y="862" width="163" height="37" rx="18" fill="#FFFFFF" stroke="#E9E9E9" stroke-width="1.5"/>
+<text x="222" y="887" font-size="19" fill="#121212" text-anchor="middle">psql-scat-test</text>
+<rect x="313" y="862" width="144" height="37" rx="18" fill="#FFFFFF" stroke="#E9E9E9" stroke-width="1.5"/>
+<text x="385" y="887" font-size="19" fill="#121212" text-anchor="middle">id-scat-test</text>
 <rect x="140" y="909" width="134" height="37" rx="18" fill="#FFFFFF" stroke="#E9E9E9" stroke-width="1.5"/>
 <text x="207" y="934" font-size="19" fill="#121212" text-anchor="middle">Token-Store</text>
 <rect x="284" y="909" width="153" height="37" rx="18" fill="#FFFFFF" stroke="#E9E9E9" stroke-width="1.5"/>
@@ -46,16 +48,16 @@
 <text x="720" y="678" font-size="26" fill="#0028A5" font-weight="600">Landing Zone PROD</text>
 <text x="720" y="706" font-size="20" fill="#666666">eigene Subscription · vended Spoke</text>
 <rect x="720" y="724" width="440" height="124" rx="8" fill="#FFFFFF" stroke="#E9E9E9" stroke-width="2"/>
-<text x="744" y="754" font-size="21" fill="#121212" font-weight="600">cae-adate-prod</text>
+<text x="744" y="754" font-size="21" fill="#121212" font-weight="600">cae-scat-prod</text>
 <text x="744" y="778" font-size="18" fill="#666666">internes Load-Balancing · Workload Profiles</text>
-<rect x="744" y="790" width="153" height="37" rx="18" fill="#FFFFFF" stroke="#E9E9E9" stroke-width="1.5"/>
-<text x="820" y="815" font-size="19" fill="#121212" text-anchor="middle">ca-adate-prod</text>
-<rect x="907" y="790" width="210" height="37" rx="18" fill="#FFFFFF" stroke="#E9E9E9" stroke-width="1.5"/>
-<text x="1012" y="815" font-size="19" fill="#121212" text-anchor="middle">caj-adate-prod-live</text>
-<rect x="720" y="862" width="172" height="37" rx="18" fill="#FFFFFF" stroke="#E9E9E9" stroke-width="1.5"/>
-<text x="806" y="887" font-size="19" fill="#121212" text-anchor="middle">psql-adate-prod</text>
-<rect x="902" y="862" width="153" height="37" rx="18" fill="#FFFFFF" stroke="#E9E9E9" stroke-width="1.5"/>
-<text x="978" y="887" font-size="19" fill="#121212" text-anchor="middle">id-adate-prod</text>
+<rect x="744" y="790" width="144" height="37" rx="18" fill="#FFFFFF" stroke="#E9E9E9" stroke-width="1.5"/>
+<text x="816" y="815" font-size="19" fill="#121212" text-anchor="middle">ca-scat-prod</text>
+<rect x="898" y="790" width="201" height="37" rx="18" fill="#FFFFFF" stroke="#E9E9E9" stroke-width="1.5"/>
+<text x="998" y="815" font-size="19" fill="#121212" text-anchor="middle">caj-scat-prod-live</text>
+<rect x="720" y="862" width="163" height="37" rx="18" fill="#FFFFFF" stroke="#E9E9E9" stroke-width="1.5"/>
+<text x="802" y="887" font-size="19" fill="#121212" text-anchor="middle">psql-scat-prod</text>
+<rect x="893" y="862" width="144" height="37" rx="18" fill="#FFFFFF" stroke="#E9E9E9" stroke-width="1.5"/>
+<text x="965" y="887" font-size="19" fill="#121212" text-anchor="middle">id-scat-prod</text>
 <rect x="720" y="909" width="134" height="37" rx="18" fill="#FFFFFF" stroke="#E9E9E9" stroke-width="1.5"/>
 <text x="787" y="934" font-size="19" fill="#121212" text-anchor="middle">Token-Store</text>
 <rect x="864" y="909" width="153" height="37" rx="18" fill="#FFFFFF" stroke="#E9E9E9" stroke-width="1.5"/>

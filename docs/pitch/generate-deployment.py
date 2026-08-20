@@ -67,11 +67,11 @@ def spoke(x, env, y=630, w=520):
         f'<rect x="{x + 40}" y="{y + 94}" width="{w - 80}" height="124" rx="8" '
         f'fill="#FFFFFF" stroke="{LINE}" stroke-width="2"/>'
     )
-    text(x + 64, y + 124, 21, f"cae-adate-{env}", weight=600)
+    text(x + 64, y + 124, 21, f"cae-scat-{env}", weight=600)
     text(x + 64, y + 148, 18, "internes Load-Balancing · Workload Profiles", fill=GREY)
-    chips([f"ca-adate-{env}", f"caj-adate-{env}-live"], x + 64, y + 160, w - 128, size=19)
+    chips([f"ca-scat-{env}", f"caj-scat-{env}-live"], x + 64, y + 160, w - 128, size=19)
 
-    chips([f"psql-adate-{env}", f"id-adate-{env}", "Token-Store", "Log Analytics"],
+    chips([f"psql-scat-{env}", f"id-scat-{env}", "Token-Store", "Log Analytics"],
           x + 40, y + 232, w - 80, size=19)
 
 
@@ -102,12 +102,13 @@ add(
 )
 text(650, 366, 22, "Internet", anchor="middle")
 arrow_down(650, 390, 434)
-text(672, 418, 19, "HTTPS 443 · adate.azr.uzh.ch", fill=GREY)
+text(672, 418, 19, "HTTPS 443", fill=GREY)
 
 # Connectivity Hub
 add(f'<rect x="100" y="440" width="1100" height="130" rx="10" fill="{BLUE}"/>')
 text(140, 486, 26, "Connectivity Hub — eigene Subscription", fill="#FFFFFF", weight=600)
-chips(["Application Gateway", "WAF", "Host-Listener", "internal.azr.uzh.ch"],
+chips(["Application Gateway", "WAF", "scat-test.azr.uzh.ch", "scat.azr.uzh.ch",
+       "internal.azr.uzh.ch"],
       140, 502, 1020, dark=True)
 
 # Peering in die beiden Spokes

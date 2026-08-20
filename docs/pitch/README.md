@@ -43,11 +43,14 @@ Modulen oder Ressourcen automatisch stimmen. Die übrigen vier sind
 handgeschriebenes SVG und werden direkt editiert; Text bricht in SVG nicht um,
 jede Zeile ist also ein eigenes `<text>` bzw. `<tspan>`.
 
-Folie 4 gibt den Stand von
-[uzh-app-platform](https://github.com/uzh-zi/uzh-app-platform) wieder: ein
-`cae-adate-<env>` je vended Landing Zone, internes Load-Balancing, Workload
-Profiles. Prod existiert dort noch nicht als eigene `tfvars` — die Folie zeigt
-Test und Prod als das Zielbild, das die Trennung der Subscriptions vorgibt.
+Folie 4 folgt der Namensgebung von
+[uzh-app-platform](https://github.com/uzh-zi/uzh-app-platform): alle Ressourcen
+heissen `<präfix>-${project}-${env}`, und die Folie setzt `project = "scat"` ein
+— also die konkrete App statt des Template-Namens. Zwei Vereinfachungen sind
+bewusst: Prod existiert dort heute nicht als eigene `tfvars` (die Folie zeigt
+Test und Prod als Zielbild, das die Trennung der Subscriptions vorgibt), und die
+beiden Hostnamen am Gateway sind illustrativ — verbindlich wird ein Hostname
+erst mit dem Routing-Eintrag in UZH-Connectivity-Management.
 
 ## Woher die Zahlen stammen
 

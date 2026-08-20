@@ -76,14 +76,16 @@
 
       <section>
         <img class="folie" src="folie-4-deployment.svg"
-             alt="Folie 4: Deployment. Aus dem Internet über das Application Gateway im Connectivity Hub, per VNet-Peering in zwei Landing Zones mit je einem Container Apps Environment für Test und Prod.">
+             alt="Folie 4: Deployment. Aus dem Internet über das Application Gateway im Connectivity Hub, per VNet-Peering in zwei Landing Zones mit je einem Container Apps Environment für Test und Prod; darunter ein gemeinsames Azure-OpenAI-Deployment in einer eigenen Subscription.">
         <aside class="notes">
           Zwei Landing Zones, je eine eigene Subscription, je ein eigenes
           Container Apps Environment — und ein einziger Eingang: das zentrale
           Application Gateway. Das ist keine Stilfrage: die Landing Zone verbietet
           öffentliche IP-Adressen per Policy. Wer hier zuhört und selbst deployen
           will, merkt sich die beiden Pull Requests — Subnetze bei Subscription
-          Vending, Ingress bei Connectivity Management.
+          Vending, Ingress bei Connectivity Management. Azure OpenAI steht bewusst
+          ausserhalb der beiden Zonen: eine eigene Subscription, von Test und Prod
+          gemeinsam genutzt, künftig der LLM-Proxy.
         </aside>
       </section>
 

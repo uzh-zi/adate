@@ -52,6 +52,12 @@ Test und Prod als Zielbild, das die Trennung der Subscriptions vorgibt), und die
 beiden Hostnamen am Gateway sind illustrativ — verbindlich wird ein Hostname
 erst mit dem Routing-Eintrag in UZH-Connectivity-Management.
 
+Zwei Kästchen werden gern verwechselt: der **Easy-Auth-Token-Store** ist der
+Blob-Container, in dem die Plattform das ID-Token ablegt (`APPKIT_AUTH=verify`
+funktioniert ohne ihn nicht), und gehört deshalb in die Landing Zone. Das
+**Azure-OpenAI-Deployment** für die Embeddings steht dagegen ausserhalb: eigene
+Subscription, von Test und Prod gemeinsam genutzt, künftig der LLM-Proxy.
+
 ## Woher die Zahlen stammen
 
 Alle Zahlen kommen aus dem Servicekatalog (`scat`), mit dem das Template

@@ -57,9 +57,9 @@ def arrow_down(x, y0, y1):
     )
 
 
-def spoke(x, env, y=630, w=520):
+def spoke(x, env, y=590, w=520):
     """Eine Landing Zone: Karte, CAE-Kasten, umgebende Ressourcen."""
-    add(f'<rect x="{x}" y="{y}" width="{w}" height="350" rx="10" fill="{PANEL}"/>')
+    add(f'<rect x="{x}" y="{y}" width="{w}" height="330" rx="10" fill="{PANEL}"/>')
     text(x + 40, y + 48, 26, f"Landing Zone {env.upper()}", fill=BLUE, weight=600)
     text(x + 40, y + 76, 20, "eigene Subscription · vended Spoke", fill=GREY)
 
@@ -71,7 +71,7 @@ def spoke(x, env, y=630, w=520):
     text(x + 64, y + 148, 18, "internes Load-Balancing · Workload Profiles", fill=GREY)
     chips([f"ca-scat-{env}", f"caj-scat-{env}-live"], x + 64, y + 160, w - 128, size=19)
 
-    chips([f"psql-scat-{env}", f"id-scat-{env}", "Token-Store", "Log Analytics"],
+    chips([f"psql-scat-{env}", f"id-scat-{env}", "Easy-Auth-Token-Store", "Log Analytics"],
           x + 40, y + 232, w - 80, size=19)
 
 
@@ -97,35 +97,49 @@ text(100, 276, 31,
 
 # Internet
 add(
-    '<rect x="555" y="330" width="190" height="56" rx="28" fill="#FFFFFF" '
+    '<rect x="555" y="320" width="190" height="52" rx="26" fill="#FFFFFF" '
     f'stroke="{LINE}" stroke-width="2"/>'
 )
-text(650, 366, 22, "Internet", anchor="middle")
-arrow_down(650, 390, 434)
-text(672, 418, 19, "HTTPS 443", fill=GREY)
+text(650, 354, 22, "Internet", anchor="middle")
+arrow_down(650, 376, 416)
+text(672, 404, 19, "HTTPS 443", fill=GREY)
 
 # Connectivity Hub
-add(f'<rect x="100" y="440" width="1100" height="130" rx="10" fill="{BLUE}"/>')
-text(140, 486, 26, "Connectivity Hub — eigene Subscription", fill="#FFFFFF", weight=600)
+add(f'<rect x="100" y="422" width="1100" height="120" rx="10" fill="{BLUE}"/>')
+text(140, 466, 26, "Connectivity Hub — eigene Subscription", fill="#FFFFFF", weight=600)
 chips(["Application Gateway", "WAF", "scat-test.azr.uzh.ch", "scat.azr.uzh.ch",
        "internal.azr.uzh.ch"],
-      140, 502, 1020, dark=True)
+      140, 482, 1020, dark=True)
 
 # Peering in die beiden Spokes
 for x0 in (360, 940):
-    arrow_down(x0, 574, 626)
-text(378, 606, 19, "VNet-Peering", fill=GREY)
-text(958, 606, 19, "VNet-Peering", fill=GREY)
+    arrow_down(x0, 546, 586)
+text(378, 578, 19, "VNet-Peering", fill=GREY)
+text(958, 578, 19, "VNet-Peering", fill=GREY)
 
 spoke(100, "test")
 spoke(680, "prod")
 
+# Azure OpenAI steht in einer eigenen Subscription und wird von beiden Landing
+# Zones benutzt — deshalb liegt es ausserhalb der Spoke-Karten.
+for x0 in (360, 940):
+    arrow_down(x0, 922, 946)
+add(
+    '<rect x="100" y="950" width="1100" height="74" rx="10" fill="#FFFFFF" '
+    f'stroke="{BLUE}" stroke-width="2"/>'
+)
+text(140, 979, 22, "Azure OpenAI — eigene Subscription, für Test und Prod dieselbe",
+     fill=BLUE, weight=600)
+text(140, 1006, 19,
+     "Embeddings für die semantische Suche · Zugriff über Managed Identity "
+     "· künftig der LLM-Proxy", fill=GREY)
+
 # Rechte Spalte
 add(
-    '<rect x="1300" y="330" width="520" height="650" rx="10" fill="#FFFFFF" '
+    '<rect x="1300" y="320" width="520" height="704" rx="10" fill="#FFFFFF" '
     f'stroke="{LINE}" stroke-width="2"/>'
 )
-text(1340, 386, 23, "WAS DARAUS FOLGT", fill=BLUE, weight=600, spacing=2)
+text(1340, 376, 23, "WAS DARAUS FOLGT", fill=BLUE, weight=600, spacing=2)
 
 blocks = [
     ("Keine öffentliche IP", [
@@ -148,7 +162,7 @@ blocks = [
         "Regeln; sonst kommt die App nicht raus.",
     ]),
 ]
-y = 450
+y = 452
 for head, lines in blocks:
     add(f'<rect x="1340" y="{y - 21}" width="9" height="9" fill="{BLUE}"/>')
     text(1366, y - 10, 27, head, weight=600)

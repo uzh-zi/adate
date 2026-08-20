@@ -145,7 +145,7 @@ for head, lines in blocks:
     y = ly + 52
 
 text(100, 1058, 21, "Adate / Appkit — Pitch", fill=GREY)
-text(1820, 1058, 21, "3 / 5", fill=GREY, anchor="end")
+text(1820, 1058, 21, "3 / 6", fill=GREY, anchor="end")
 add("</svg>")
 
 path = pathlib.Path(__file__).parent / "folie-3-architektur.svg"

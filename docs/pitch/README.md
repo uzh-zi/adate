@@ -1,6 +1,6 @@
 # Pitchfolien
 
-Fünf Folien (deutsch, 1920 × 1080) für zwei Zielgruppen: die Fachseite, die
+Sechs Folien (deutsch, 1920 × 1080) für zwei Zielgruppen: die Fachseite, die
 wissen will, was sie bekommt und was sie beitragen muss — und die Entwicklung,
 die sicher sein will, dass an ihr keine KI-Altlast hängen bleibt.
 
@@ -9,8 +9,9 @@ die sicher sein will, dass an ihr keine KI-Altlast hängen bleibt.
 | 1 · Worum es geht | SharePoint → Indexer → Elasticsearch → CGI-Proxy → SPA gegen SharePoint → App |
 | 2 · Für Fachnutzer:innen | Was du erreichst / was du beiträgst / womit du arbeitest |
 | 3 · Architektur | adate wird geklont, appkit wird importiert — und was daraus folgt |
-| 4 · Für Entwickler:innen | Die drei AGENTS.md-Regeln und was ruff, pytest und pa11y erzwingen |
-| 5 · Beleg und nächste Schritte | Gemessene Suchqualität, dann die offenen Punkte |
+| 4 · Deployment | Zwei Landing Zones hinter dem Application Gateway im Connectivity Hub |
+| 5 · Für Entwickler:innen | Die drei AGENTS.md-Regeln und was ruff, pytest und pa11y erzwingen |
+| 6 · Beleg und nächste Schritte | Gemessene Suchqualität, dann die offenen Punkte |
 
 ## Vorführen
 
@@ -36,10 +37,17 @@ sauber importiert. Nach einer Änderung am SVG das PNG neu erzeugen:
 rsvg-convert -w 1920 folie-1-worum-es-geht.svg -o folie-1-worum-es-geht.png
 ```
 
-Folie 3 wird von `generate-architektur.py` erzeugt, damit die Chip-Breiten beim
-Umbenennen von Modulen automatisch stimmen. Die übrigen vier sind
+Folie 3 und 4 werden von `generate-architektur.py` und
+`generate-deployment.py` erzeugt, damit die Chip-Breiten beim Umbenennen von
+Modulen oder Ressourcen automatisch stimmen. Die übrigen vier sind
 handgeschriebenes SVG und werden direkt editiert; Text bricht in SVG nicht um,
 jede Zeile ist also ein eigenes `<text>` bzw. `<tspan>`.
+
+Folie 4 gibt den Stand von
+[uzh-app-platform](https://github.com/uzh-zi/uzh-app-platform) wieder: ein
+`cae-adate-<env>` je vended Landing Zone, internes Load-Balancing, Workload
+Profiles. Prod existiert dort noch nicht als eigene `tfvars` — die Folie zeigt
+Test und Prod als das Zielbild, das die Trennung der Subscriptions vorgibt.
 
 ## Woher die Zahlen stammen
 

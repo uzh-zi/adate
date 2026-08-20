@@ -75,7 +75,20 @@
       </section>
 
       <section>
-        <img class="folie" src="folie-4-entwicklerinnen.svg"
+        <img class="folie" src="folie-4-deployment.svg"
+             alt="Folie 4: Deployment. Aus dem Internet über das Application Gateway im Connectivity Hub, per VNet-Peering in zwei Landing Zones mit je einem Container Apps Environment für Test und Prod.">
+        <aside class="notes">
+          Zwei Landing Zones, je eine eigene Subscription, je ein eigenes
+          Container Apps Environment — und ein einziger Eingang: das zentrale
+          Application Gateway. Das ist keine Stilfrage: die Landing Zone verbietet
+          öffentliche IP-Adressen per Policy. Wer hier zuhört und selbst deployen
+          will, merkt sich die beiden Pull Requests — Subnetze bei Subscription
+          Vending, Ingress bei Connectivity Management.
+        </aside>
+      </section>
+
+      <section>
+        <img class="folie" src="folie-5-entwicklerinnen.svg"
              alt="Folie 4: Für Entwicklerinnen und Entwickler. Die drei AGENTS.md-Regeln links, was ruff, pytest und pa11y in der CI erzwingen rechts.">
         <aside class="notes">
           Hier geht es um die Sorge, am Ende fremden KI-Code zu warten. Die Antwort ist
@@ -85,7 +98,7 @@
       </section>
 
       <section>
-        <img class="folie" src="folie-5-beleg-und-naechste-schritte.svg"
+        <img class="folie" src="folie-6-beleg-und-naechste-schritte.svg"
              alt="Folie 5: Validiert, nicht behauptet. Trefferquote der Suche 67 auf 83 Prozent an erster Stelle und 75 auf 100 Prozent unter den ersten drei, dazu die nächsten Schritte.">
         <aside class="notes">
           Die Trefferquoten stammen aus scripts/eval_search.py über alle 112

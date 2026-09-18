@@ -6,7 +6,7 @@
 # productive image is in the CI image in an identical version" true rather than
 # aspirational: both stages below come from the same lineage, so the interpreter
 # here and the interpreter that ships are the same binary.
-FROM registry.cs.zi.uzh.ch/zi-iti-ccs-cloud/python-ci:3.11 AS build
+FROM acrcentralregprod.azurecr.io/uzh/zi/python-ci:3.11 AS build
 WORKDIR /app
 
 ENV UV_COMPILE_BYTECODE=1 \
@@ -29,7 +29,7 @@ RUN uv sync --locked --no-dev
 #
 # The runtime tier carries no agent, no Node and no gh. git is absent too, which
 # is why the venv is copied in rather than resolved here.
-FROM registry.cs.zi.uzh.ch/zi-iti-ccs-cloud/python-runtime:3.11 AS runtime
+FROM acrcentralregprod.azurecr.io/uzh/zi/python-runtime:3.11 AS runtime
 WORKDIR /app
 
 # Both tiers run as the same uid, so the venv arrives with workable ownership,

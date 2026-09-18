@@ -42,6 +42,8 @@ app/
     uzh_logo.svg      # vendored from the 2.10.0 release
     fonts/            # Source Sans, vendored — no CDN
 tests/               # pytest, runs on appkit's fake backend
+.devcontainer/       # the dev container — see "Getting started"
+.python-version      # 3.11, for dev, CI and production alike
 Dockerfile           # multi-stage, non-root, managed-identity runtime
 AGENTS.md            # house rules for the AI assistant
 .pa11yci.json        # accessibility config (WCAG2AA)
@@ -50,8 +52,87 @@ AGENTS.md            # house rules for the AI assistant
 
 ## Getting started
 
+### In the dev container (recommended)
+
+The container is the stack. It carries the pinned interpreter, the linters, a
+browser for the accessibility check, and Claude Code already configured with
+UZH's defaults — so "it works on my machine" and "it works in CI" stop being two
+different claims.
+
+One-time setup:
+
+- Docker Desktop or Podman
+- VS Code with the **Dev Containers** extension (or the `devcontainer` CLI)
+- the UZH network — on campus, or the VPN, which everyone can get
+- a sign-in to the registry, once:
+
+  ```sh
+  az login
+  az acr login --name acrcentralregprod
+  ```
+
+Then:
+
+**VS Code:**
+
 ```sh
-uv sync --extra dev              # installs appkit (from git) + app deps
+git clone git@github.com:uzh-zi/adate.git && cd adate
+code .                           # VS Code offers "Reopen in Container" — accept
+```
+
+**IntelliJ IDEA:** start from the **Welcome screen** — *Remote Development* →
+*Create Dev Container* → pick a backend IDE → point it at this repository. The
+project then opens in a JetBrains Client window.
+
+Do not start from an already-open project ("Reopen in Container" inside the
+IDE). That path works, but it leaves you with two windows: the original local
+one, which shows the container in the *Services* tool window, plus the Client
+window you actually work in. Starting from the Welcome screen never opens the
+local window in the first place. Either way, *Services* → *Show Dev Containers*
+is where you stop or restart it.
+
+On first start IntelliJ downloads its backend IDE into the container, so that
+run takes noticeably longer than later ones.
+
+The container pulls, then `uv sync --locked --extra dev` runs on its own. When
+it finishes:
+
+```sh
+uv run uvicorn app.main:app --reload --port 8080
+# open http://localhost:8080  — you're the local "Dev User"
+```
+
+That is the whole setup. No Python to install, no Node, no Azure account beyond
+the registry sign-in, and no network: [appkit](https://github.com/uzh-zi/appkit)
+serves in-memory fakes locally, so SharePoint and mail work without touching
+either.
+
+What you get, without configuring any of it:
+
+| | |
+| --- | --- |
+| Python | 3.11, from `.python-version` — the same interpreter CI and production run |
+| `ruff`, `pytest` | resolved from `uv.lock`, so the linter that fails a pull request is the one you ran |
+| `pa11y` | works offline — Chromium is in the image |
+| Claude Code | installed, with UZH's managed settings applied and not overridable |
+| the user | non-root, no password, able to install packages and nothing more |
+
+The image is `acrcentralregprod.azurecr.io/uzh/zi/python-dev:3.11`, built from
+[base-container-images](https://gitlab.uzh.ch/zi-cloud-projekt/base-container-images);
+its `doc/agentic-dev-containers.md` explains what the container does and — just
+as important — does not enforce.
+
+It is built for amd64, so on an Apple Silicon Mac it runs under emulation. That
+is slower, and deliberate: the architecture a developer runs is the architecture
+that ships.
+
+### Without a container
+
+You will need [uv](https://docs.astral.sh/uv/) and, for the accessibility check,
+Node.
+
+```sh
+uv sync --locked --extra dev     # installs appkit (from git) + app deps
 uv run uvicorn app.main:app --reload --port 8080
 # open http://localhost:8080  — you're the local "Dev User"
 ```
@@ -69,6 +150,10 @@ Run the accessibility check locally (needs Node):
 uv run uvicorn app.main:app --port 8080 &
 npx pa11y-ci --config .pa11yci.json
 ```
+
+uv reads `.python-version` and fetches Python 3.11 if you do not have it, so the
+interpreter still matches. Everything else — the linter version, the browser —
+is yours to keep in step, which is the reason the container exists.
 
 ## Corporate design
 

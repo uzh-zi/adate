@@ -1,0 +1,68 @@
+{
+  "name": "adate (UZH Python dev container)",
+
+  // The UZH Python dev image. It carries the interpreter (via uv), the agent
+  // layer -- a non-root user, a narrow doas policy and Claude Code's managed
+  // settings -- and Chromium for the accessibility check. See
+  // https://gitlab.uzh.ch/zi-cloud-projekt/base-container-images
+  // doc/agentic-dev-containers.md for what it does and does not enforce.
+  //
+  // The central registry denies public network access by default, so pulling
+  // needs the UZH network -- campus or the VPN, which everyone can get -- plus
+  // `az acr login --name acrcentralregprod` once. There is no anonymous pull.
+  "image": "acrcentralregprod.azurecr.io/uzh/zi/python-dev:3.11",
+
+  // The image is built for amd64. On an Apple Silicon machine this runs under
+  // emulation, which is slower but keeps the developer, CI and production
+  // architectures identical -- the whole point of the family.
+  "runArgs": ["--platform=linux/amd64"],
+
+  // uvicorn --reload watches for file events, and on macOS and Windows those do
+  // not cross the boundary between the host filesystem and the container -- the
+  // reloader starts, says nothing, and never fires. Verified: without this, an
+  // edit to app/logic.py produced no reload at all; with it, the reload is
+  // immediate. Polling costs a little CPU on a tree this size, which is a good
+  // trade for a --reload that actually reloads.
+  "remoteEnv": {
+    "WATCHFILES_FORCE_POLLING": "1"
+  },
+
+  "remoteUser": "dev",
+
+  // The project is bind-mounted over /workspace, which hides the image's own
+  // ownership of that directory -- so what the mount brings decides whether
+  // `uv sync` can create .venv there. On Linux a bind mount preserves the host
+  // uid, which only happens to match dev's 1000. Align the container user with
+  // the host user instead of relying on that coincidence.
+  "updateRemoteUserUID": true,
+  "workspaceFolder": "/workspace",
+
+  // --locked fails if uv.lock has drifted from pyproject.toml instead of
+  // quietly resolving something else, so everyone gets the same dependency set
+  // the Dockerfile and CI get. The interpreter comes from .python-version and
+  // is already present in the image.
+  "postCreateCommand": "uv sync --locked --extra dev",
+
+  // The app serves on 8080. Forwarding it is what makes "open
+  // http://localhost:8080" true from the host browser.
+  "forwardPorts": [8080],
+  "portsAttributes": {
+    "8080": {
+      "label": "adate",
+      "onAutoForward": "notify"
+    }
+  },
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "charliermarsh.ruff",
+        "anthropic.claude-code"
+      ],
+      "settings": {
+        "python.defaultInterpreterPath": "/workspace/.venv/bin/python"
+      }
+    }
+  }
+}

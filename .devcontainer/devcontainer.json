@@ -18,6 +18,13 @@
   "runArgs": ["--platform=linux/amd64"],
 
   "remoteUser": "dev",
+
+  // The project is bind-mounted over /workspace, which hides the image's own
+  // ownership of that directory -- so what the mount brings decides whether
+  // `uv sync` can create .venv there. On Linux a bind mount preserves the host
+  // uid, which only happens to match dev's 1000. Align the container user with
+  // the host user instead of relying on that coincidence.
+  "updateRemoteUserUID": true,
   "workspaceFolder": "/workspace",
 
   // --locked fails if uv.lock has drifted from pyproject.toml instead of

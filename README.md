@@ -73,10 +73,26 @@ One-time setup:
 
 Then:
 
+**VS Code:**
+
 ```sh
 git clone git@github.com:uzh-zi/adate.git && cd adate
 code .                           # VS Code offers "Reopen in Container" — accept
 ```
+
+**IntelliJ IDEA:** start from the **Welcome screen** — *Remote Development* →
+*Create Dev Container* → pick a backend IDE → point it at this repository. The
+project then opens in a JetBrains Client window.
+
+Do not start from an already-open project ("Reopen in Container" inside the
+IDE). That path works, but it leaves you with two windows: the original local
+one, which shows the container in the *Services* tool window, plus the Client
+window you actually work in. Starting from the Welcome screen never opens the
+local window in the first place. Either way, *Services* → *Show Dev Containers*
+is where you stop or restart it.
+
+On first start IntelliJ downloads its backend IDE into the container, so that
+run takes noticeably longer than later ones.
 
 The container pulls, then `uv sync --locked --extra dev` runs on its own. When
 it finishes:

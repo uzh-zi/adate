@@ -1,0 +1,39 @@
+{
+  "name": "adate (UZH Python dev container)",
+
+  // The UZH Python dev image. It carries the interpreter (via uv), the agent
+  // layer -- a non-root user, a narrow doas policy and Claude Code's managed
+  // settings -- and Chromium for the accessibility check. See
+  // https://gitlab.uzh.ch/zi-cloud-projekt/base-container-images
+  // doc/agentic-dev-containers.md for what it does and does not enforce.
+  //
+  // Pulling needs no registry account; the project allows anonymous pull.
+  "image": "registry.cs.zi.uzh.ch/zi-iti-ccs-cloud/python-dev:3.11",
+
+  // The image is built for amd64. On an Apple Silicon machine this runs under
+  // emulation, which is slower but keeps the developer, CI and production
+  // architectures identical -- the whole point of the family.
+  "runArgs": ["--platform=linux/amd64"],
+
+  "remoteUser": "dev",
+  "workspaceFolder": "/workspace",
+
+  // --locked fails if uv.lock has drifted from pyproject.toml instead of
+  // quietly resolving something else, so everyone gets the same dependency set
+  // the Dockerfile and CI get. The interpreter comes from .python-version and
+  // is already present in the image.
+  "postCreateCommand": "uv sync --locked --extra dev",
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "charliermarsh.ruff",
+        "anthropic.claude-code"
+      ],
+      "settings": {
+        "python.defaultInterpreterPath": "/workspace/.venv/bin/python"
+      }
+    }
+  }
+}

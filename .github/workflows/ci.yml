@@ -6,53 +6,49 @@ on:
   pull_request:
 
 jobs:
-  build:
+  # The checks that gate a merge, run in the same image a developer works in and
+  # the same lineage the production image is built from. Nothing is installed
+  # here: the interpreter comes from .python-version via the image's uv, and
+  # every tool -- ruff, pytest -- comes from uv.lock. That is what makes the ruff
+  # that fails a pull request the same ruff that passed on someone's laptop.
+  checks:
     runs-on: ubuntu-latest
+    container:
+      image: registry.cs.zi.uzh.ch/zi-iti-ccs-cloud/python-dev:3.11
+      # The registry allows anonymous pull, so no credentials are needed here.
+      #
+      # --user root is about the Actions runner, not about this image: the
+      # runner creates the workspace as root on the host and mounts it in, so a
+      # job running as the image's unprivileged user cannot check out into it.
+      # The non-root guarantee that matters is in the runtime and dev images,
+      # where a person or an agent is actually working.
+      options: --user root
+    env:
+      APPKIT_BACKEND: fake
+      APPKIT_AUTH: dev
     steps:
       - name: Checkout app
         uses: actions/checkout@v4
 
-      # appkit is the companion library, installed from its main branch. Uses
-      # the workflow token so it works for a private repo too. Pin `ref` to a
-      # tag once appkit publishes releases.
-      - name: Checkout appkit
-        uses: actions/checkout@v4
-        with:
-          repository: uzh-zi/appkit
-          ref: main
-          path: .appkit
-          token: ${{ secrets.GITHUB_TOKEN }}
+      # --locked fails if uv.lock has drifted from pyproject.toml rather than
+      # quietly resolving something else, so CI tests the dependency set that
+      # ships -- including the exact appkit commit. The appkit-canary job below
+      # is what watches appkit's main branch.
+      - name: Install dependencies
+        run: uv sync --locked --extra dev
 
-      - name: Install uv
-        uses: astral-sh/setup-uv@v5
-        with:
-          python-version: "3.11"
-
-      # setup-uv already provisions and activates a .venv (VIRTUAL_ENV is set),
-      # so install straight into it rather than creating another venv.
-      - name: Install appkit and app
+      - name: Confirm the interpreter is the pinned one
         run: |
-          uv pip install ./.appkit
-          uv pip install -e '.[dev]'
+          uv run python -V
+          test "$(uv run python -c 'import sys;print("%d.%d"%sys.version_info[:2])')" = "$(cat .python-version)"
 
       - name: Lint
         run: uv run ruff check .
 
       - name: Test
-        env:
-          APPKIT_BACKEND: fake
-          APPKIT_AUTH: dev
         run: uv run pytest
 
-      - name: Setup Node (for pa11y)
-        uses: actions/setup-node@v4
-        with:
-          node-version: "22"
-
       - name: Start example app
-        env:
-          APPKIT_BACKEND: fake
-          APPKIT_AUTH: dev
         run: |
           # Fully detach the server (own session, no inherited stdio) so the
           # Actions runner doesn't adopt it as an orphan and hang at cleanup.
@@ -63,9 +59,36 @@ jobs:
             sleep 1
           done
 
+      # Chromium and the PUPPETEER_* variables come from the image: puppeteer's
+      # own Chromium download is glibc-only and would not run here.
       - name: Accessibility check (pa11y, WCAG 2.1 AA)
         run: npx -y pa11y-ci --config .pa11yci.json
 
       - name: Stop example app
         if: always()
         run: pkill -f "uvicorn app.main" || true
+
+  # Early warning that appkit's main branch has broken us. Deliberately not a
+  # merge gate: appkit moving is appkit's business, and the checks job above
+  # must stay reproducible. Before this was a separate job, CI installed appkit
+  # from main and therefore never tested the dependency set that ships.
+  appkit-canary:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    container:
+      image: registry.cs.zi.uzh.ch/zi-iti-ccs-cloud/python-dev:3.11
+      options: --user root
+    env:
+      APPKIT_BACKEND: fake
+      APPKIT_AUTH: dev
+    steps:
+      - name: Checkout app
+        uses: actions/checkout@v4
+
+      - name: Install dependencies, then move appkit to its main branch
+        run: |
+          uv sync --locked --extra dev
+          uv pip install --upgrade git+https://github.com/uzh-zi/appkit.git@main
+
+      - name: Test against appkit main
+        run: uv run pytest

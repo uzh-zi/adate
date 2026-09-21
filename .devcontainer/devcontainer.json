@@ -7,10 +7,10 @@
   // https://gitlab.uzh.ch/zi-cloud-projekt/base-container-images
   // doc/agentic-dev-containers.md for what it does and does not enforce.
   //
-  // The central registry denies public network access by default, so pulling
-  // needs the UZH network -- campus or the VPN, which everyone can get -- plus
-  // `az acr login --name acrcentralregprod` once. There is no anonymous pull.
-  "image": "acrcentralregprod.azurecr.io/uzh/zi/python-dev:3.11",
+  // Published from a public GitLab project, so the pull needs no account, no
+  // VPN and no token that expires. That is deliberate: see section 6 of
+  // doc/agentic-dev-containers.md in base-container-images.
+  "image": "cr.gitlab.uzh.ch/zi-cloud-projekt/base-container-images/python-dev:3.11",
 
   // The image is built for amd64. On an Apple Silicon machine this runs under
   // emulation, which is slower but keeps the developer, CI and production

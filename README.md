@@ -59,17 +59,10 @@ browser for the accessibility check, and Claude Code already configured with
 UZH's defaults — so "it works on my machine" and "it works in CI" stop being two
 different claims.
 
-One-time setup:
+One-time setup — two things, and no account anywhere:
 
 - Docker Desktop or Podman
-- VS Code with the **Dev Containers** extension (or the `devcontainer` CLI)
-- the UZH network — on campus, or the VPN, which everyone can get
-- a sign-in to the registry, once:
-
-  ```sh
-  az login
-  az acr login --name acrcentralregprod
-  ```
+- VS Code with the **Dev Containers** extension, or IntelliJ IDEA
 
 Then:
 
@@ -102,10 +95,9 @@ uv run uvicorn app.main:app --reload --port 8080
 # open http://localhost:8080  — you're the local "Dev User"
 ```
 
-That is the whole setup. No Python to install, no Node, no Azure account beyond
-the registry sign-in, and no network: [appkit](https://github.com/uzh-zi/appkit)
-serves in-memory fakes locally, so SharePoint and mail work without touching
-either.
+That is the whole setup. No Python to install, no Node, no account to create,
+and no network: [appkit](https://github.com/uzh-zi/appkit) serves in-memory fakes
+locally, so SharePoint and mail work without touching either.
 
 What you get, without configuring any of it:
 
@@ -117,10 +109,13 @@ What you get, without configuring any of it:
 | Claude Code | installed, with UZH's managed settings applied and not overridable |
 | the user | non-root, no password, able to install packages and nothing more |
 
-The image is `acrcentralregprod.azurecr.io/uzh/zi/python-dev:3.11`, built from
-[base-container-images](https://gitlab.uzh.ch/zi-cloud-projekt/base-container-images);
-its `doc/agentic-dev-containers.md` explains what the container does and — just
-as important — does not enforce.
+The image is
+`cr.gitlab.uzh.ch/zi-cloud-projekt/base-container-images/python-dev:3.11`, built
+from [base-container-images](https://gitlab.uzh.ch/zi-cloud-projekt/base-container-images).
+That project is public, so the pull needs no account, no VPN and no token that
+expires — deliberately, because a dev container that cannot be started cold is
+not much of a golden path. Its `doc/agentic-dev-containers.md` explains what the
+container does and — just as important — does not enforce.
 
 It is built for amd64, so on an Apple Silicon Mac it runs under emulation. That
 is slower, and deliberate: the architecture a developer runs is the architecture

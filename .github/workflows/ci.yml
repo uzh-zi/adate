@@ -5,14 +5,8 @@ on:
     branches: ["**"]
   pull_request:
 
-permissions:
-  contents: read
-  # Required for the federated credential. No Azure client secret and no
-  # registry password exists anywhere in this repository.
-  id-token: write
-
 env:
-  IMAGE: acrcentralregprod.azurecr.io/uzh/zi/python-dev:3.11
+  IMAGE: cr.gitlab.uzh.ch/zi-cloud-projekt/base-container-images/python-dev:3.11
 
 jobs:
   # The checks that gate a merge, run in the same image a developer works in and
@@ -21,95 +15,82 @@ jobs:
   # every tool -- ruff, pytest -- comes from uv.lock. That is what makes the ruff
   # that fails a pull request the same ruff that passed on someone's laptop.
   #
-  # Self-hosted, because acrcentralregprod denies public network access and
-  # allow-lists the UZH ranges; a GitHub-hosted runner authenticates fine and
-  # then cannot reach the registry. azure-cmdb, scat and jupyterhub-aks run here
-  # for the same reason.
+  # The image is published from a public GitLab project, so a GitHub-hosted
+  # runner can pull it with no credentials and no network of ours to reach. That
+  # is the whole reason these images are not in the central Azure registry.
+  #
+  # --user root because the runner owns the workspace it mounts in; the non-root
+  # guarantee that matters is in the runtime and dev images, where a person or an
+  # agent is actually working.
   checks:
-    runs-on: self-hosted
-    environment: prod
+    runs-on: ubuntu-latest
+    container:
+      image: cr.gitlab.uzh.ch/zi-cloud-projekt/base-container-images/python-dev:3.11
+      options: --user root
+    env:
+      APPKIT_BACKEND: fake
+      APPKIT_AUTH: dev
     steps:
       - uses: actions/checkout@v5
 
-      - name: Azure login
-        uses: azure/login@v2
-        with:
-          client-id: ${{ vars.AZURE_CLIENT_ID }}
-          tenant-id: ${{ vars.AZURE_TENANT_ID }}
-          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+      # --locked fails if uv.lock has drifted from pyproject.toml rather than
+      # quietly resolving something else, so CI tests the dependency set that
+      # ships, including the pinned appkit commit. The appkit-canary job below is
+      # what watches appkit main.
+      - name: Install dependencies
+        run: uv sync --locked --extra dev
 
-      - name: Registry login
-        run: az acr login --name acrcentralregprod
-
-      # The image is run explicitly rather than declared as the job's
-      # `container:`. A job container is pulled before the first step runs,
-      # which is before `az acr login` has happened -- so it would need a
-      # registry password in a secret. This way the federated credential above
-      # is the only thing that authenticates, as everywhere else here.
-      #
-      # --user root because the runner owns the workspace it mounts in; the
-      # non-root guarantee that matters is in the runtime and dev images, where
-      # a person or an agent is actually working.
-      - name: Lint, test and accessibility check
+      - name: Confirm the interpreter is the pinned one
         run: |
-          docker run --rm \
-            -v "$PWD:/workspace" -w /workspace --user root \
-            -e APPKIT_BACKEND=fake -e APPKIT_AUTH=dev \
-            "$IMAGE" bash -euo pipefail -c '
-              # --locked fails if uv.lock has drifted from pyproject.toml rather
-              # than quietly resolving something else, so CI tests the dependency
-              # set that ships, including the pinned appkit commit. The
-              # appkit-canary job below is what watches appkit main.
-              uv sync --locked --extra dev
+          uv run python -V
+          test "$(uv run python -c 'import sys;print("%d.%d"%sys.version_info[:2])')" = "$(cat .python-version)"
 
-              uv run python -V
-              test "$(uv run python -c "import sys;print(\"%d.%d\"%sys.version_info[:2])")" = "$(cat .python-version)"
+      - name: Lint
+        run: uv run ruff check .
 
-              uv run ruff check .
-              uv run pytest
+      - name: Test
+        run: uv run pytest
 
-              # Fully detach the server (own session, no inherited stdio) so
-              # nothing adopts it as an orphan and hangs at cleanup.
-              setsid uv run uvicorn app.main:app --host 127.0.0.1 --port 8080 \
-                > uvicorn.log 2>&1 < /dev/null &
-              for i in $(seq 1 30); do
-                curl -sf http://localhost:8080/health && break
-                sleep 1
-              done
+      - name: Start example app
+        run: |
+          # Fully detach the server (own session, no inherited stdio) so the
+          # Actions runner doesn't adopt it as an orphan and hang at cleanup.
+          setsid uv run uvicorn app.main:app --host 127.0.0.1 --port 8080 \
+            > uvicorn.log 2>&1 < /dev/null &
+          for i in $(seq 1 30); do
+            curl -sf http://localhost:8080/health && break
+            sleep 1
+          done
 
-              # Chromium and the PUPPETEER_* variables come from the image:
-              # puppeteer downloads a glibc-only build that would not run here.
-              npx -y pa11y-ci --config .pa11yci.json
-            '
+      # Chromium and the PUPPETEER_* variables come from the image: puppeteer
+      # downloads a glibc-only build that would not run here.
+      - name: Accessibility check (pa11y, WCAG 2.1 AA)
+        run: npx -y pa11y-ci --config .pa11yci.json
+
+      - name: Stop example app
+        if: always()
+        run: pkill -f "uvicorn app.main" || true
 
   # Early warning that appkit main has broken us. Deliberately not a merge gate:
   # appkit moving is appkit business, and the checks job must stay reproducible.
   # Before this was a separate job, CI installed appkit from main and therefore
   # never tested the dependency set the Dockerfile builds.
   appkit-canary:
-    runs-on: self-hosted
-    environment: prod
+    runs-on: ubuntu-latest
     continue-on-error: true
+    container:
+      image: cr.gitlab.uzh.ch/zi-cloud-projekt/base-container-images/python-dev:3.11
+      options: --user root
+    env:
+      APPKIT_BACKEND: fake
+      APPKIT_AUTH: dev
     steps:
       - uses: actions/checkout@v5
 
-      - name: Azure login
-        uses: azure/login@v2
-        with:
-          client-id: ${{ vars.AZURE_CLIENT_ID }}
-          tenant-id: ${{ vars.AZURE_TENANT_ID }}
-          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
-
-      - name: Registry login
-        run: az acr login --name acrcentralregprod
+      - name: Install dependencies, then move appkit to its main branch
+        run: |
+          uv sync --locked --extra dev
+          uv pip install --upgrade git+https://github.com/uzh-zi/appkit.git@main
 
       - name: Test against appkit main
-        run: |
-          docker run --rm \
-            -v "$PWD:/workspace" -w /workspace --user root \
-            -e APPKIT_BACKEND=fake -e APPKIT_AUTH=dev \
-            "$IMAGE" bash -euo pipefail -c '
-              uv sync --locked --extra dev
-              uv pip install --upgrade git+https://github.com/uzh-zi/appkit.git@main
-              uv run pytest
-            '
+        run: uv run pytest

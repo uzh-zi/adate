@@ -10,12 +10,19 @@
   // Published from a public GitLab project, so the pull needs no account, no
   // VPN and no token that expires. That is deliberate: see section 6 of
   // doc/agentic-dev-containers.md in base-container-images.
-  "image": "cr.gitlab.uzh.ch/zi-cloud-projekt/base-container-images/python-dev:3.11",
-
-  // The image is built for amd64. On an Apple Silicon machine this runs under
-  // emulation, which is slower but keeps the developer, CI and production
-  // architectures identical -- the whole point of the family.
-  "runArgs": ["--platform=linux/amd64"],
+  //
+  // Pinned to the immutable `3.11-<short sha>` twin rather than the moving
+  // `3.11`, so a rebuild of the family cannot change this container under us;
+  // `git show a00e1f07` in base-container-images says what went into it.
+  // Bumping the pin is how a newer image reaches this project, and a new pin is
+  // always a fresh pull -- podman would otherwise keep a stale local copy of a
+  // moving tag and only warn.
+  //
+  // The tag is a manifest list for amd64 and arm64, so an Apple Silicon machine
+  // runs it natively -- no --platform argument, on purpose. Emulation is where
+  // Claude Code dies (section 3 of doc/agentic-dev-containers.md), and CI and
+  // production still get the amd64 image from the same tag.
+  "image": "cr.gitlab.uzh.ch/zi-cloud-projekt/base-container-images/python-dev:3.11-a00e1f07",
 
   // uvicorn --reload watches for file events, and on macOS and Windows those do
   // not cross the boundary between the host filesystem and the container -- the

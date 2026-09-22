@@ -174,9 +174,17 @@ borders and focus rings at 3:1.
 
 ## Before you say you're done
 
-Run these locally (they are exactly what CI runs):
+Work in the dev container; it holds the pinned interpreter and the tools CI
+uses. See "Getting started" in README.md.
+
+Never add a dependency by hand. Edit `pyproject.toml`, run `uv lock`, and commit
+`uv.lock` — CI installs with `--locked` and fails on drift, and the production
+image builds from that same lockfile.
+
+Run these (they are exactly what CI runs):
 
 ```sh
+uv sync --locked --extra dev
 uv run ruff check .        # lint & import order
 uv run pytest              # unit + integration tests, fake backend
 ```

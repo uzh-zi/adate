@@ -42,6 +42,13 @@
   // uid, which only happens to match dev's 1000. Align the container user with
   // the host user instead of relying on that coincidence.
   "updateRemoteUserUID": true,
+  //
+  // workspaceFolder alone only sets the working directory; the bind itself has
+  // to be declared, or the project lands on the default /workspaces/adate and
+  // /workspace stays the image's own empty directory -- postCreateCommand then
+  // runs `uv sync` somewhere without a pyproject.toml and fails. /workspace is
+  // the image's WORKDIR, so keep the pair in step.
+  "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind",
   "workspaceFolder": "/workspace",
 
   // --locked fails if uv.lock has drifted from pyproject.toml instead of
@@ -49,6 +56,28 @@
   // the Dockerfile and CI get. The interpreter comes from .python-version and
   // is already present in the image.
   "postCreateCommand": "uv sync --locked --extra dev",
+
+  // Claude Code and Copilot Chat both declare extensionKind "workspace", so
+  // VS Code runs them in the container's extension host and the agent spawns
+  // the image's own `claude` -- which is why /etc/claude-code/managed-settings
+  // .json actually binds. The cost is that /home/dev is image state: without
+  // this, the login is redone on every rebuild.
+  //
+  // A bind mount rather than a named volume, deliberately. A fresh named
+  // volume at a path the image does not contain is created root-owned, and the
+  // doas policy here permits dev exactly /usr/bin/apt-get -- so nothing inside
+  // the container can chown it and the agent silently cannot save its
+  // credentials. A bind carries the host uid that updateRemoteUserUID already
+  // aligns dev to. Verified both ways.
+  //
+  // Keyed by folder name, and outside the tree so it is not something .gitignore
+  // has to remember. initializeCommand runs on the host, before the container
+  // exists: the directory has to be created by the user, because a missing bind
+  // source is created by the daemon as root and lands back on the problem above.
+  "initializeCommand": "mkdir -p ${localEnv:HOME}/.claude-devcontainers/${localWorkspaceFolderBasename}",
+  "mounts": [
+    "source=${localEnv:HOME}/.claude-devcontainers/${localWorkspaceFolderBasename},target=/home/dev/.claude,type=bind"
+  ],
 
   // The app serves on 8080. Forwarding it is what makes "open
   // http://localhost:8080" true from the host browser.

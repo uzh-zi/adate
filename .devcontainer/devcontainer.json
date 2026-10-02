@@ -42,6 +42,13 @@
   // uid, which only happens to match dev's 1000. Align the container user with
   // the host user instead of relying on that coincidence.
   "updateRemoteUserUID": true,
+  //
+  // workspaceFolder alone only sets the working directory; the bind itself has
+  // to be declared, or the project lands on the default /workspaces/adate and
+  // /workspace stays the image's own empty directory -- postCreateCommand then
+  // runs `uv sync` somewhere without a pyproject.toml and fails. /workspace is
+  // the image's WORKDIR, so keep the pair in step.
+  "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind",
   "workspaceFolder": "/workspace",
 
   // --locked fails if uv.lock has drifted from pyproject.toml instead of

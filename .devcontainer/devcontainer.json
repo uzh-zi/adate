@@ -22,7 +22,7 @@
   // runs it natively -- no --platform argument, on purpose. Emulation is where
   // Claude Code dies (section 3 of doc/agentic-dev-containers.md), and CI and
   // production still get the amd64 image from the same tag.
-  "image": "cr.gitlab.uzh.ch/zi-cloud-projekt/base-container-images/python-dev:3.11-a00e1f07",
+  "image": "cr.gitlab.uzh.ch/zi-cloud-projekt/base-container-images/python-dev:3.11",
 
   // uvicorn --reload watches for file events, and on macOS and Windows those do
   // not cross the boundary between the host filesystem and the container -- the
@@ -65,7 +65,8 @@
       "extensions": [
         "ms-python.python",
         "charliermarsh.ruff",
-        "anthropic.claude-code"
+        "anthropic.claude-code",
+        "GitHub.copilot-chat"
       ],
       "settings": {
         "python.defaultInterpreterPath": "/workspace/.venv/bin/python"
